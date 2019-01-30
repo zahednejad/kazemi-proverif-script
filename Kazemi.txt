@@ -1,0 +1,85 @@
+free c.
+fun Rep/2.
+fun Gen/2.
+fun h/2.
+free T.
+const P.
+
+
+query attacker ( SK).
+query event userrauthenticated (SK) => event userauthentication (SK).
+query event Sensorauthenticated (SK) => event Sensorauthentication (SK).
+
+let User=
+(*Registration*)
+new K;
+let RID=h(K,ID) in
+out(cv,RID);
+in(cv,ri);
+let (Sigma,T)=Gen(Bio) in
+let RPW=h(PW,K) in
+let X=h(PRW,Sigma) in
+let Y=Xor(K,h(ID,PW,Sigma)) in
+let Ri=Xor(ri,h(ID,Sigma)) in
+
+(*User authentication*)
+in(c,(Id,pw,bio));
+
+let sigma=Rep(bio,T) in
+let K2=Xor(Y,h(Id,pw,sigma)) in
+let prw=h(pw,K2) in
+let X2=h(prw,sigma) in
+if X2=X then
+
+new m;
+let Mi=mult(m,P) in
+let (Mx,My)=Mi in
+let (Nx,Ny)=mult(m,Ppub) in
+let R*=Xor(R,h(ID,sigma)) in
+let DIDi=Xor(RID,Ny) in
+let DIDj=Xor(RID,Nx) in
+let Vi=h(DIDi,DIDj,(Mx,My),R*) in
+event userauthentication(SK);
+out(c,(DIDi,DIDj,(Mx,My),Vi));
+in(c,(Wj,Vsn,B));
+let h(Sj)=Xor(Wj,h(IDj,h(R*),Mi,B)) in
+let SK=h(mult(m,B),IDj,h(R*),h(Sj)) in
+if Vsn=h(SK,IDj) then
+event sensorauthenticated(SK).
+
+let TA=
+
+(*User Registration*)
+in(cv,Rid);
+out(cv,(h(Rid,s));
+(*User Authentication*)
+in(c,(DIDi,DIDj,Mi,Vi));
+let NTA=mult(s,Mi) in
+let NTA=(Nx,Ny) in
+let RID=Xor(DIDi,Ny) in
+let IDj=Xor(DIDj,Nx) in
+let Ri=h(RID,s) in
+let v=h(DIDi,DIDj,Mi,Ri) in
+
+if v=Vi then 
+let Wta=Xor(h(Ri),h(Sj,Mi)) in
+let Hta=h(Wta,Sj) in
+out(c,(Wta,Hta,Mi)).
+
+let SN=
+in(c,(Wta,Hta,Mi));
+if Hta=h(Wta,Sj) then
+let h(Ri)=Xor(Wta,h(Sj,Mi)) in
+new b;
+let B=mult(b,P) in
+let SK=h(mult(b,Mi),IDj,h(Ri),h(Sj)) in
+let Vsn=h(SK,IDj) in
+let Wj=Xor(h(Sj),h(IDj,h(Ri),M,B)) in
+event sensorauthentication(SK);
+out(c,(Wj,Vsn,B));
+event userauthenticated(SK).
+
+process
+new Sj;
+
+((!SN)|(!User)|!(TA))
